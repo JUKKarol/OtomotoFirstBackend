@@ -22,9 +22,9 @@ namespace OtomotoSimpleBackend.Entities
 
             // Relacja jeden do wielu (1:N) między tabelami Offer i Owner
             modelBuilder.Entity<Offer>()
-                .HasOne(o => o.Owner) // Oferta ma jednego właściciela
-                .WithMany(o => o.Offers) // Właściciel ma wiele ofert
-                .HasForeignKey(o => o.OwnerId); // Klucz obcy w tabeli Offer
+                .HasOne<Owner>()
+                .WithMany()
+                .HasForeignKey(o => o.OwnerId);
 
             base.OnModelCreating(modelBuilder);
         }
