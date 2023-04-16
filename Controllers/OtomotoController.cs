@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
 using OtomotoSimpleBackend.Entities;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace OtomotoSimpleBackend.Controllers
 {
@@ -16,50 +15,168 @@ namespace OtomotoSimpleBackend.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public IActionResult Get()
+        [HttpGet("GetOffers")]
+        public IActionResult GetOffers()
         {
             var offers = _context.Offers.ToList(); // Pobranie wszystkich ofert z bazy danych
 
             return Ok(offers); // Zwrócenie ofert jako odpowiedź HTTP 200 OK
         }
 
-        [HttpPost("Owner")]
-        public IActionResult AddOwner(Owner owner)
+        [HttpGet("GetOwners")]
+        public IActionResult GetOwners()
         {
-            _context.Owners.Add(owner); // Dodanie nowego właściciela do lokalnego kontekstu bazy danych
-            _context.SaveChanges(); // Zapisanie zmian w bazie danych
+            var owners = _context.Owners.ToList(); // Pobranie wszystkich ofert z bazy danych
 
-            return Ok(owner); // Zwrócenie dodanego właściciela jako odpowiedź HTTP 200 OK
+            return Ok(owners); // Zwrócenie ofert jako odpowiedź HTTP 200 OK
         }
 
-        // POST: api/Otomoto/Offer
-        [HttpPost("Offer")]
-        public IActionResult AddOffer(Offer offer)
+        [HttpGet("GetOwnerOffers/{ownerId}")]
+        public IActionResult GetOwnerOffers(Guid ownerId)
         {
-            _context.Offers.Add(offer); // Dodanie nowej oferty do lokalnego kontekstu bazy danych
-            _context.SaveChanges(); // Zapisanie zmian w bazie danych
+            var offers = _context.Offers
+                .Where(o => o.OwnerId == ownerId)
+                .ToList(); // Pobranie wszystkich ofert z bazy danych
 
-            return Ok(offer); // Zwrócenie dodanej oferty jako odpowiedź HTTP 200 OK
+            return Ok(offers); // Zwrócenie ofert jako odpowiedź HTTP 200 OK
         }
 
-        // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("GetOfferById/{offerId}")]
+        public IActionResult GetOfferById(Guid offerId)
         {
-            return "value";
+            var offer = _context.Offers
+                .Where(o => o.Id == offerId)
+                .ToList(); // Pobranie wszystkich ofert z bazy danych
+
+            return Ok(offer); // Zwrócenie ofert jako odpowiedź HTTP 200 OK
         }
 
-        // PUT api/<ValuesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("CreateOffer")]
+        public IActionResult CreateOffer(CreateOfferRequest request)
         {
+            var owner = _context.Owners.FirstOrDefault(o => o.Id == request.OwnerId);
+            if (owner == null)
+            {
+                return NotFound("Owner doesn't exist");
+            }
+
+            // Tworzenie nowej oferty
+            var offer = new Offer
+            {
+                Brand = request.Brand,
+                Model = request.Model,
+                EngineSizeInL = request.EngineSizeInL,
+                ProductionYear = request.ProductionYear,
+                Milleage = request.Milleage,
+                Owner = owner, // Przypisanie istniejącego właściciela do oferty
+            };
+
+            // Zapisanie nowej oferty do bazy danych
+            _context.Offers.Add(offer);
+            _context.SaveChanges();
+
+            // Zwrócenie odpowiedzi HTTP
+            return Ok(offer);
         }
 
-        // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("CreateOwner")]
+        public IActionResult CreateOwner(CreateOwnerRequest request)
         {
+            // Tworzenie nowego właściciela
+            var owner = new Owner
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                PhoneNumber = request.PhoneNumber,
+                City = request.City,
+                Offers = new List<Offer>()  // Przypisanie pustej listy ofert
+            };
+
+            // Zapisanie nowego właściciela do bazy danych
+            _context.Owners.Add(owner);
+            _context.SaveChanges();
+
+            // Zwrócenie odpowiedzi HTTP
+            return Ok(owner);
         }
+
+        [HttpPut("PutOffer/{id}")]
+        public IActionResult PutOffer(Guid id, [FromBody] CreateOfferRequest updatedOfferRequest)
+        {
+            var existingOffer = _context.Offers.FirstOrDefault(o => o.Id == id); // Pobranie istniejącej oferty z bazy danych
+
+            if (existingOffer == null)
+            {
+                return NotFound("Offer doesn't exist");
+            }
+
+            // Zaktualizuj dane oferty na podstawie przesłanych informacji
+            existingOffer.Brand = updatedOfferRequest.Brand;
+            existingOffer.Model = updatedOfferRequest.Model;
+            existingOffer.EngineSizeInL = updatedOfferRequest.EngineSizeInL;
+            existingOffer.ProductionYear = updatedOfferRequest.ProductionYear;
+            existingOffer.Milleage = updatedOfferRequest.Milleage;
+            existingOffer.OwnerId = updatedOfferRequest.OwnerId;
+
+            _context.SaveChanges(); // Zapisz zmiany w bazie danych
+
+            return Ok(existingOffer); // Zwróć zaktualizowaną ofertę jako odpowiedź HTTP 200 OK
+        }
+
+        [HttpPut("PutOwner/{id}")]
+        public IActionResult PutOwner(Guid id, [FromBody] CreateOwnerRequest updatedOwnerRequest)
+        {
+            var existingOwner = _context.Owners.FirstOrDefault(o => o.Id == id); // Pobranie istniejącej oferty z bazy danych
+
+            if (existingOwner == null)
+            {
+                return NotFound("Owner doesn't exist");
+            }
+
+            // Zaktualizuj dane oferty na podstawie przesłanych informacji
+            existingOwner.FirstName = updatedOwnerRequest.FirstName;
+            existingOwner.LastName = updatedOwnerRequest.LastName;
+            existingOwner.PhoneNumber = updatedOwnerRequest.PhoneNumber;
+            existingOwner.City = updatedOwnerRequest.City;
+
+            _context.SaveChanges(); // Zapisz zmiany w bazie danych
+
+            return Ok(existingOwner); // Zwróć zaktualizowaną ofertę jako odpowiedź HTTP 200 OK
+        }
+
+        [HttpDelete("DeleteOffer{id}")]
+        public IActionResult DeleteOffer(Guid id)
+        {
+            // Znajdź ofertę do usunięcia na podstawie podanego ID
+            var offer = _context.Offers.FirstOrDefault(o => o.Id == id);
+
+            if (offer == null)
+            {
+                return NotFound("Offer doesn't exist"); // Jeśli oferta nie istnieje, zwróć odpowiedź HTTP 404 Not Found
+            }
+
+            _context.Offers.Remove(offer); // Usuń ofertę z kontekstu bazy danych
+            _context.SaveChanges(); // Zapisz zmiany w bazie danych
+
+            return Ok(offer);
+        }
+
+        [HttpDelete("DeleteOwner{id}")]
+        public IActionResult DeleteOwner(Guid id)
+        {
+            // Znajdź ofertę do usunięcia na podstawie podanego ID
+            var owner = _context.Owners.FirstOrDefault(o => o.Id == id);
+
+            if (owner == null)
+            {
+                return NotFound("Offer doesn't exist"); // Jeśli oferta nie istnieje, zwróć odpowiedź HTTP 404 Not Found
+            }
+
+            _context.Owners.Remove(owner); // Usuń ofertę z kontekstu bazy danych
+            _context.SaveChanges(); // Zapisz zmiany w bazie danych
+
+            return Ok(owner);
+        }
+
     }
 }

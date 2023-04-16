@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OtomotoSimpleBackend.Entities;
 
@@ -11,9 +12,11 @@ using OtomotoSimpleBackend.Entities;
 namespace OtomotoSimpleBackend.Migrations
 {
     [DbContext(typeof(OtomotoContext))]
-    partial class OtomotoContextModelSnapshot : ModelSnapshot
+    [Migration("20230415142941_AddAutoGuid")]
+    partial class AddAutoGuid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,10 +68,10 @@ namespace OtomotoSimpleBackend.Migrations
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FirstName")
+                    b.Property<string>("Firstame")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LastName")
+                    b.Property<string>("Lastame")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PhoneNumber")
@@ -81,18 +84,11 @@ namespace OtomotoSimpleBackend.Migrations
 
             modelBuilder.Entity("OtomotoSimpleBackend.Entities.Offer", b =>
                 {
-                    b.HasOne("OtomotoSimpleBackend.Entities.Owner", "Owner")
-                        .WithMany("Offers")
+                    b.HasOne("OtomotoSimpleBackend.Entities.Owner", null)
+                        .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("OtomotoSimpleBackend.Entities.Owner", b =>
-                {
-                    b.Navigation("Offers");
                 });
 #pragma warning restore 612, 618
         }

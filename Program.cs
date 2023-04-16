@@ -1,6 +1,8 @@
 
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using OtomotoSimpleBackend.Entities;
+using System.Text.Json.Serialization;
 
 namespace OtomotoSimpleBackend
 {
@@ -17,6 +19,12 @@ namespace OtomotoSimpleBackend
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.Configure<JsonOptions>(options =>
+            {
+                options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
+
+
             builder.Services.AddDbContext<OtomotoContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("OtomotoConnectionString")));
 
@@ -27,6 +35,16 @@ namespace OtomotoSimpleBackend
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+            }
+
+            //Informacja przed uruchomieniem api czy s¹ jakieœ nieza³adowane migracje na bazie danych (jeœli s¹to sie zaaplikuj¹)
+            using var scope = app.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetService<OtomotoContext>();
+
+            var pendingMigrations = dbContext.Database.GetPendingMigrations();
+            if (pendingMigrations.Any())
+            {
+                dbContext.Database.Migrate();
             }
 
             app.UseHttpsRedirection();

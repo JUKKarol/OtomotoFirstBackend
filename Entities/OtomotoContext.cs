@@ -20,11 +20,10 @@ namespace OtomotoSimpleBackend.Entities
             modelBuilder.Entity<Owner>()
                 .HasKey(o => o.Id); // Ustawienie klucza głównego dla tabeli Owner
 
-            // Relacja jeden do wielu (1:N) między tabelami Offer i Owner
             modelBuilder.Entity<Offer>()
-                .HasOne<Owner>()
-                .WithMany()
-                .HasForeignKey(o => o.OwnerId);
+                .HasOne(o => o.Owner) // Definicja relacji wiele-do-jeden
+                .WithMany(o => o.Offers) // Definicja relacji jeden-do-wielu
+                .HasForeignKey(o => o.OwnerId); // Klucz obcy OwnerId w tabeli Offer
 
             base.OnModelCreating(modelBuilder);
         }
