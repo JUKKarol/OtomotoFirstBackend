@@ -8,6 +8,6 @@
         public int PhoneNumber { get; set; }
         public string City { get; set; }
 
-        public List<Offer> Offers { get; set; } // Właściwość nawigacyjna do ofert
+        public List<Offer> Offers { get; set; }
     }
 }

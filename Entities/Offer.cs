@@ -10,7 +10,7 @@
         public int Milleage { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-        public Guid OwnerId { get; set; } // Dodanie klucza obcego do właściciela
-        public Owner Owner { get; set; } // Właściwość nawigacyjna do właściciela
+        public Guid OwnerId { get; set; }
+        public Owner Owner { get; set; }
     }
 }

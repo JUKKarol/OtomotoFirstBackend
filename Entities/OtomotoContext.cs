@@ -15,15 +15,15 @@ namespace OtomotoSimpleBackend.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Offer>()
-                .HasKey(o => o.Id); // Ustawienie klucza głównego dla tabeli Offer
+                .HasKey(o => o.Id);
 
             modelBuilder.Entity<Owner>()
-                .HasKey(o => o.Id); // Ustawienie klucza głównego dla tabeli Owner
+                .HasKey(o => o.Id);
 
             modelBuilder.Entity<Offer>()
-                .HasOne(o => o.Owner) // Definicja relacji wiele-do-jeden
-                .WithMany(o => o.Offers) // Definicja relacji jeden-do-wielu
-                .HasForeignKey(o => o.OwnerId); // Klucz obcy OwnerId w tabeli Offer
+                .HasOne(o => o.Owner)
+                .WithMany(o => o.Offers)
+                .HasForeignKey(o => o.OwnerId);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -1,7 +1,9 @@
 
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using OtomotoSimpleBackend.Entities;
+using OtomotoSimpleBackend.Seeders;
 using System.Text.Json.Serialization;
 
 namespace OtomotoSimpleBackend
@@ -12,10 +14,7 @@ namespace OtomotoSimpleBackend
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -30,21 +29,23 @@ namespace OtomotoSimpleBackend
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            var scope = app.Services.CreateScope();
 
-            //Informacja przed uruchomieniem api czy s¹ jakieœ nieza³adowane migracje na bazie danych (jeœli s¹to sie zaaplikuj¹)
-            using var scope = app.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetService<OtomotoContext>();
 
             var pendingMigrations = dbContext.Database.GetPendingMigrations();
             if (pendingMigrations.Any())
             {
                 dbContext.Database.Migrate();
+            }
+
+            var seeder = new Seeder(dbContext);
+            seeder.Seed();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();
