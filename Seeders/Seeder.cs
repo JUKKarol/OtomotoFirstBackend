@@ -12,9 +12,9 @@ namespace OtomotoSimpleBackend.Seeders
             _otomotoContext = otomotoContext;
         }
 
-        public async Task Seed()
+        public void Seed()
         {
-            if (await _otomotoContext.Database.CanConnectAsync())
+            if (_otomotoContext.Database.CanConnect())
             {
                 if (!_otomotoContext.Owners.Any() && !_otomotoContext.Offers.Any())
                 {
@@ -109,7 +109,7 @@ namespace OtomotoSimpleBackend.Seeders
                     };
 
                     _otomotoContext.Offers.AddRange(offer1, offer2, offer3, offer4, offer5, offer6);
-                    await _otomotoContext.SaveChangesAsync();
+                    _otomotoContext.SaveChangesAsync();
                 }
             }
         }
