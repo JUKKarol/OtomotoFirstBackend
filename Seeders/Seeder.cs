@@ -109,7 +109,7 @@ namespace OtomotoSimpleBackend.Seeders
                     };
 
                     _otomotoContext.Offers.AddRange(offer1, offer2, offer3, offer4, offer5, offer6);
-                    _otomotoContext.SaveChangesAsync();
+                    _otomotoContext.SaveChanges();
                 }
             }
         }
