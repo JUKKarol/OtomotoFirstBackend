@@ -43,6 +43,27 @@ namespace OtomotoSimpleBackend.Entities
             {
                 eb.HasKey(o => o.Id);
 
+                eb.Property(o => o.FirstName)
+                .IsRequired()
+                .HasMaxLength(20);
+
+                eb.Property(o => o.LastName)
+                .IsRequired()
+                .HasMaxLength(20);
+
+                eb.Property(o => o.PhoneNumber)
+               .IsRequired();
+
+                eb.Property(o => o.City)
+               .HasMaxLength(25);
+
+                eb.Property(o => o.Email)
+               .IsRequired()
+               .HasMaxLength(30);
+
+                eb.Property(o => o.Password)
+               .IsRequired()
+               .HasMaxLength(40);
             });
 
             base.OnModelCreating(modelBuilder);
