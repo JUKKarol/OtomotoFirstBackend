@@ -1,6 +1,8 @@
-﻿using Azure.Core;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OtomotoSimpleBackend.Data;
+using OtomotoSimpleBackend.DTOs;
 using OtomotoSimpleBackend.Entities;
 
 namespace OtomotoSimpleBackend.Controllers
@@ -10,29 +12,21 @@ namespace OtomotoSimpleBackend.Controllers
     public class OtomotoController : ControllerBase
     {
         private readonly OtomotoContext _context;
+        private readonly IMapper _mapper;
 
-        public OtomotoController(OtomotoContext context)
+        public OtomotoController(OtomotoContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet("GetOffers")]
         public IActionResult GetOffers()
         {
             var offers = _context.Offers
-                .AsNoTracking()
-                .Select(o => new
-                {
-                    o.Id,
-                    o.Brand,
-                    o.Model,
-                    o.EngineSizeInL,
-                    o.ProductionYear,
-                    o.Milleage,
-                    o.CreatedDate,
-                    o.OwnerId
-                })
-                .ToList();
+            .AsNoTracking()
+            .Select(o => _mapper.Map<OfferDto>(o))
+            .ToList();
 
             return Ok(offers);
         }

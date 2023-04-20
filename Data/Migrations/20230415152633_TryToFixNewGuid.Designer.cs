@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OtomotoSimpleBackend.Entities;
+using OtomotoSimpleBackend.Data;
 
 #nullable disable
 
 namespace OtomotoSimpleBackend.Migrations
 {
     [DbContext(typeof(OtomotoContext))]
-    [Migration("20230415134859_removeNaviPropAndUpdateStringForPhoneNumber")]
-    partial class removeNaviPropAndUpdateStringForPhoneNumber
+    [Migration("20230415152633_TryToFixNewGuid")]
+    partial class TryToFixNewGuid
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

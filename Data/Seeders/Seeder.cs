@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OtomotoSimpleBackend.Data;
 using OtomotoSimpleBackend.Entities;
 
-namespace OtomotoSimpleBackend.Seeders
+namespace OtomotoSimpleBackend.Data.Seeders
 {
     public class Seeder
     {

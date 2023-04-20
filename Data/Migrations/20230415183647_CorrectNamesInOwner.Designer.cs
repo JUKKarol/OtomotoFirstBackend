@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OtomotoSimpleBackend.Entities;
+using OtomotoSimpleBackend.Data;
 
 #nullable disable
 
 namespace OtomotoSimpleBackend.Migrations
 {
     [DbContext(typeof(OtomotoContext))]
-    [Migration("20230415124156_Init")]
-    partial class Init
+    [Migration("20230415183647_CorrectNamesInOwner")]
+    partial class CorrectNamesInOwner
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,6 @@ namespace OtomotoSimpleBackend.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Brand")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
@@ -45,7 +44,6 @@ namespace OtomotoSimpleBackend.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Model")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("OwnerId")
@@ -67,15 +65,13 @@ namespace OtomotoSimpleBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("City")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Firstame")
-                        .IsRequired()
+                    b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Lastame")
-                        .IsRequired()
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PhoneNumber")

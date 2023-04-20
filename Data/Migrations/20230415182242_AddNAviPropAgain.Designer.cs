@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OtomotoSimpleBackend.Entities;
+using OtomotoSimpleBackend.Data;
 
 #nullable disable
 
 namespace OtomotoSimpleBackend.Migrations
 {
     [DbContext(typeof(OtomotoContext))]
-    [Migration("20230419163444_ConfigureOffer")]
-    partial class ConfigureOffer
+    [Migration("20230415182242_AddNAviPropAgain")]
+    partial class AddNAviPropAgain
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,48 +31,23 @@ namespace OtomotoSimpleBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("AutomaticTransmission")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Body")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.Property<string>("Brand")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("EngineSizeInL")
-                        .HasPrecision(5, 3)
-                        .HasColumnType("float(5)");
-
-                    b.Property<string>("FuelType")
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<int>("HorsePower")
-                        .HasColumnType("int");
+                        .HasColumnType("float");
 
                     b.Property<int>("Milleage")
                         .HasColumnType("int");
 
                     b.Property<string>("Model")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("PriceInEur")
-                        .HasColumnType("int");
 
                     b.Property<int>("ProductionYear")
                         .HasColumnType("int");
@@ -93,19 +68,10 @@ namespace OtomotoSimpleBackend.Migrations
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
+                    b.Property<string>("Firstame")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
+                    b.Property<string>("Lastame")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PhoneNumber")

@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OtomotoSimpleBackend.Entities;
+using OtomotoSimpleBackend.Data;
 
 #nullable disable
 
 namespace OtomotoSimpleBackend.Migrations
 {
     [DbContext(typeof(OtomotoContext))]
-    partial class OtomotoContextModelSnapshot : ModelSnapshot
+    [Migration("20230420104823_ConfigureOwner")]
+    partial class ConfigureOwner
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

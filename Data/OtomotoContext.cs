@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OtomotoSimpleBackend.Entities;
 
-namespace OtomotoSimpleBackend.Entities
+namespace OtomotoSimpleBackend.Data
 {
     public class OtomotoContext : DbContext
     {

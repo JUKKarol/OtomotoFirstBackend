@@ -1,4 +1,4 @@
-﻿namespace OtomotoSimpleBackend.Entities
+﻿namespace OtomotoSimpleBackend.DTOs
 {
     public class OwnerDtoRegistration
     {

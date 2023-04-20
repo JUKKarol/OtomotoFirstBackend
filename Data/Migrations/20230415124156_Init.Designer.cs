@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OtomotoSimpleBackend.Entities;
+using OtomotoSimpleBackend.Data;
 
 #nullable disable
 
 namespace OtomotoSimpleBackend.Migrations
 {
     [DbContext(typeof(OtomotoContext))]
-    [Migration("20230415142941_AddAutoGuid")]
-    partial class AddAutoGuid
+    [Migration("20230415124156_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,7 @@ namespace OtomotoSimpleBackend.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Brand")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
@@ -44,6 +45,7 @@ namespace OtomotoSimpleBackend.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Model")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("OwnerId")
@@ -65,13 +67,15 @@ namespace OtomotoSimpleBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("City")
+                        .HasColumnType("int");
 
                     b.Property<string>("Firstame")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Lastame")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PhoneNumber")
@@ -84,11 +88,18 @@ namespace OtomotoSimpleBackend.Migrations
 
             modelBuilder.Entity("OtomotoSimpleBackend.Entities.Offer", b =>
                 {
-                    b.HasOne("OtomotoSimpleBackend.Entities.Owner", null)
-                        .WithMany()
+                    b.HasOne("OtomotoSimpleBackend.Entities.Owner", "Owner")
+                        .WithMany("Offers")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("OtomotoSimpleBackend.Entities.Owner", b =>
+                {
+                    b.Navigation("Offers");
                 });
 #pragma warning restore 612, 618
         }

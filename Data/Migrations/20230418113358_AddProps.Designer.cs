@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OtomotoSimpleBackend.Entities;
+using OtomotoSimpleBackend.Data;
 
 #nullable disable
 
 namespace OtomotoSimpleBackend.Migrations
 {
     [DbContext(typeof(OtomotoContext))]
-    [Migration("20230415152633_TryToFixNewGuid")]
-    partial class TryToFixNewGuid
+    [Migration("20230418113358_AddProps")]
+    partial class AddProps
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,14 +31,29 @@ namespace OtomotoSimpleBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("AutomaticTransmission")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Brand")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("EngineSizeInL")
                         .HasColumnType("float");
+
+                    b.Property<string>("FuelType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HorsePower")
+                        .HasColumnType("int");
 
                     b.Property<int>("Milleage")
                         .HasColumnType("int");
@@ -48,6 +63,9 @@ namespace OtomotoSimpleBackend.Migrations
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("PriceInEur")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductionYear")
                         .HasColumnType("int");
@@ -68,10 +86,16 @@ namespace OtomotoSimpleBackend.Migrations
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Firstame")
+                    b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Lastame")
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PhoneNumber")
@@ -84,11 +108,18 @@ namespace OtomotoSimpleBackend.Migrations
 
             modelBuilder.Entity("OtomotoSimpleBackend.Entities.Offer", b =>
                 {
-                    b.HasOne("OtomotoSimpleBackend.Entities.Owner", null)
-                        .WithMany()
+                    b.HasOne("OtomotoSimpleBackend.Entities.Owner", "Owner")
+                        .WithMany("Offers")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("OtomotoSimpleBackend.Entities.Owner", b =>
+                {
+                    b.Navigation("Offers");
                 });
 #pragma warning restore 612, 618
         }

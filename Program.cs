@@ -1,9 +1,7 @@
-
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using OtomotoSimpleBackend.Entities;
-using OtomotoSimpleBackend.Seeders;
+using OtomotoSimpleBackend.Data;
+using OtomotoSimpleBackend.Data.Seeders;
 using System.Text.Json.Serialization;
 
 namespace OtomotoSimpleBackend
@@ -23,9 +21,10 @@ namespace OtomotoSimpleBackend
                 options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
 
-
             builder.Services.AddDbContext<OtomotoContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("OtomotoConnectionString")));
+
+            builder.Services.AddAutoMapper(typeof(Program));
 
             var app = builder.Build();
 
