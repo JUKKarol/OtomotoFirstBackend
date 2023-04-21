@@ -13,6 +13,8 @@ namespace OtomotoSimpleBackend.Utilities.Mappings
                 .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
                 .ForMember(dest => dest.Owner, opt => opt.Ignore())
                 .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.OwnerId));
+
+            CreateMap<Offer, OfferDto>();
         }
     }
 }

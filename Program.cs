@@ -24,7 +24,7 @@ namespace OtomotoSimpleBackend
             builder.Services.AddDbContext<OtomotoContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("OtomotoConnectionString")));
 
-            builder.Services.AddAutoMapper(typeof(Program));
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
 
