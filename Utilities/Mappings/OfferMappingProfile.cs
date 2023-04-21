@@ -9,10 +9,9 @@ namespace OtomotoSimpleBackend.Utilities.Mappings
         public OfferMappingProfile()
         {
             CreateMap<OfferDto, Offer>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore())
-                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
-                .ForMember(dest => dest.Owner, opt => opt.Ignore())
-                .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.OwnerId));
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
+            .ForMember(dest => dest.Owner, opt => opt.Ignore());
 
             CreateMap<Offer, OfferDto>();
         }
