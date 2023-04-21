@@ -36,18 +36,10 @@ namespace OtomotoSimpleBackend.Controllers
         {
             var owners = _context.Owners
                 .AsNoTracking()
-                .Include(o => o.Offers)
+                .Select(o => _mapper.Map<OwnerDtoPublic>(o))
                 .ToList();
 
-            var result = owners.Select(owner => new
-            {
-                owner.Id,
-                owner.FirstName,
-                owner.LastName,
-                offersCount = owner.Offers.Count
-            });
-
-            return Ok(result);
+            return Ok(owners);
         }
 
         [HttpGet("GetOwnerOffers/{ownerId}")]
@@ -56,17 +48,7 @@ namespace OtomotoSimpleBackend.Controllers
             var offers = _context.Offers
                 .AsNoTracking()
                 .Where(o => o.OwnerId == ownerId)
-                .Select(o => new
-                {
-                    o.Id,
-                    o.Brand,
-                    o.Model,
-                    o.EngineSizeInL,
-                    o.ProductionYear,
-                    o.Milleage,
-                    o.CreatedDate,
-                    o.OwnerId
-                })
+                .Select(o => _mapper.Map<OfferDto>(o))
                 .ToList();
 
             return Ok(offers);
@@ -78,47 +60,33 @@ namespace OtomotoSimpleBackend.Controllers
             var offer = _context.Offers
                 .AsNoTracking()
                 .Where(o => o.Id == offerId)
+                .Select(o => _mapper.Map<OfferDto>(o))
                 .ToList();
 
             return Ok(offer);
         }
 
         [HttpPost("CreateOffer")]
-        public IActionResult CreateOffer(CreateOfferRequest request)
+        public IActionResult CreateOffer(OfferDto offerDto)
         {
-            var owner = _context.Owners.FirstOrDefault(o => o.Id == request.OwnerId);
+            var owner = _context.Owners.FirstOrDefault(o => o.Id == offerDto.OwnerId);
             if (owner == null)
             {
                 return NotFound("Owner doesn't exist");
             }
 
-            var offer = new Offer
-            {
-                Brand = request.Brand,
-                Model = request.Model,
-                EngineSizeInL = request.EngineSizeInL,
-                ProductionYear = request.ProductionYear,
-                Milleage = request.Milleage,
-                Owner = owner,
-            };
+            var offer = _mapper.Map<Offer>(offerDto);
 
             _context.Offers.Add(offer);
             _context.SaveChanges();
 
-            return Ok(offer);
+            return Ok(offerDto);
         }
 
         [HttpPost("CreateOwner")]
-        public IActionResult CreateOwner(CreateOwnerRequest request)
+        public IActionResult CreateOwner(OwnerDtoRegistration ownerDto)
         {
-            var owner = new Owner
-            {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                PhoneNumber = request.PhoneNumber,
-                City = request.City,
-                Offers = new List<Offer>()
-            };
+            var owner = _mapper.Map<Owner>(ownerDto);
 
             _context.Owners.Add(owner);
             _context.SaveChanges();
@@ -127,7 +95,7 @@ namespace OtomotoSimpleBackend.Controllers
         }
 
         [HttpPut("PutOffer/{id}")]
-        public IActionResult PutOffer(Guid id, [FromBody] CreateOfferRequest updatedOfferRequest)
+        public IActionResult PutOffer(Guid id, [FromBody] OfferDto offerDto)
         {
             var existingOffer = _context.Offers.FirstOrDefault(o => o.Id == id);
 
@@ -136,12 +104,7 @@ namespace OtomotoSimpleBackend.Controllers
                 return NotFound("Offer doesn't exist");
             }
 
-            existingOffer.Brand = updatedOfferRequest.Brand;
-            existingOffer.Model = updatedOfferRequest.Model;
-            existingOffer.EngineSizeInL = updatedOfferRequest.EngineSizeInL;
-            existingOffer.ProductionYear = updatedOfferRequest.ProductionYear;
-            existingOffer.Milleage = updatedOfferRequest.Milleage;
-            existingOffer.OwnerId = updatedOfferRequest.OwnerId;
+            _mapper.Map(offerDto, existingOffer);
 
             _context.SaveChanges();
 
@@ -149,7 +112,7 @@ namespace OtomotoSimpleBackend.Controllers
         }
 
         [HttpPut("PutOwner/{id}")]
-        public IActionResult PutOwner(Guid id, [FromBody] CreateOwnerRequest updatedOwnerRequest)
+        public IActionResult PutOwner(Guid id, [FromBody] OwnerDtoRegistration ownerDto)
         {
             var existingOwner = _context.Owners.FirstOrDefault(o => o.Id == id);
 
@@ -158,10 +121,7 @@ namespace OtomotoSimpleBackend.Controllers
                 return NotFound("Owner doesn't exist");
             }
 
-            existingOwner.FirstName = updatedOwnerRequest.FirstName;
-            existingOwner.LastName = updatedOwnerRequest.LastName;
-            existingOwner.PhoneNumber = updatedOwnerRequest.PhoneNumber;
-            existingOwner.City = updatedOwnerRequest.City;
+            _mapper.Map(ownerDto, existingOwner);
 
             _context.SaveChanges();
 
