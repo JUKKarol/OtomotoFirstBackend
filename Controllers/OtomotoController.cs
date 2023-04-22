@@ -21,55 +21,55 @@ namespace OtomotoSimpleBackend.Controllers
         }
 
         [HttpGet("GetOffers")]
-        public IActionResult GetOffers()
+        public async Task<IActionResult> GetOffers()
         {
-            var offers = _context.Offers
+            var offers = await _context.Offers
             .AsNoTracking()
             .Select(o => _mapper.Map<OfferDto>(o))
-            .ToList();
+            .ToListAsync();
 
             return Ok(offers);
         }
 
         [HttpGet("GetOwners")]
-        public IActionResult GetOwners()
+        public async Task<IActionResult> GetOwners()
         {
-            var owners = _context.Owners
+            var owners = await _context.Owners
                 .AsNoTracking()
                 .Select(o => _mapper.Map<OwnerDtoPublic>(o))
-                .ToList();
+                .ToListAsync();
 
             return Ok(owners);
         }
 
         [HttpGet("GetOwnerOffers/{ownerId}")]
-        public IActionResult GetOwnerOffers(Guid ownerId)
+        public async Task<IActionResult> GetOwnerOffers(Guid ownerId)
         {
-            var offers = _context.Offers
+            var offers = await _context.Offers
                 .AsNoTracking()
                 .Where(o => o.OwnerId == ownerId)
                 .Select(o => _mapper.Map<OfferDto>(o))
-                .ToList();
+                .ToListAsync();
 
             return Ok(offers);
         }
 
         [HttpGet("GetOfferById/{offerId}")]
-        public IActionResult GetOfferById(Guid offerId)
+        public async Task<IActionResult> GetOfferById(Guid offerId)
         {
-            var offer = _context.Offers
+            var offer = await _context.Offers
                 .AsNoTracking()
                 .Where(o => o.Id == offerId)
                 .Select(o => _mapper.Map<OfferDto>(o))
-                .ToList();
+                .ToListAsync();
 
             return Ok(offer);
         }
 
         [HttpPost("CreateOffer")]
-        public IActionResult CreateOffer(OfferDto offerDto)
+        public async Task<IActionResult> CreateOffer(OfferDto offerDto)
         {
-            var owner = _context.Owners.FirstOrDefault(o => o.Id == offerDto.OwnerId);
+            var owner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == offerDto.OwnerId);
             if (owner == null)
             {
                 return NotFound("Owner doesn't exist");
@@ -77,27 +77,27 @@ namespace OtomotoSimpleBackend.Controllers
 
             var offer = _mapper.Map<Offer>(offerDto);
 
-            _context.Offers.Add(offer);
-            _context.SaveChanges();
+            await _context.Offers.AddAsync(offer);
+            await _context.SaveChangesAsync();
 
             return Ok(offerDto);
         }
 
         [HttpPost("CreateOwner")]
-        public IActionResult CreateOwner(OwnerDtoRegistration ownerDto)
+        public async Task<IActionResult> CreateOwner(OwnerDtoRegistration ownerDto)
         {
             var owner = _mapper.Map<Owner>(ownerDto);
 
-            _context.Owners.Add(owner);
-            _context.SaveChanges();
+            await _context.Owners.AddAsync(owner);
+            await _context.SaveChangesAsync();
 
             return Ok(owner);
         }
 
         [HttpPut("PutOffer/{id}")]
-        public IActionResult PutOffer(Guid id, [FromBody] OfferDto offerDto)
+        public async Task<IActionResult> PutOffer(Guid id, [FromBody] OfferDto offerDto)
         {
-            var existingOffer = _context.Offers.FirstOrDefault(o => o.Id == id);
+            var existingOffer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == id);
 
             if (existingOffer == null)
             {
@@ -106,15 +106,15 @@ namespace OtomotoSimpleBackend.Controllers
 
             _mapper.Map(offerDto, existingOffer);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(existingOffer);
         }
 
         [HttpPut("PutOwner/{id}")]
-        public IActionResult PutOwner(Guid id, [FromBody] OwnerDtoRegistration ownerDto)
+        public async Task<IActionResult> PutOwner(Guid id, [FromBody] OwnerDtoRegistration ownerDto)
         {
-            var existingOwner = _context.Owners.FirstOrDefault(o => o.Id == id);
+            var existingOwner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == id);
 
             if (existingOwner == null)
             {
@@ -123,15 +123,15 @@ namespace OtomotoSimpleBackend.Controllers
 
             _mapper.Map(ownerDto, existingOwner);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(existingOwner);
         }
 
         [HttpDelete("DeleteOffer{id}")]
-        public IActionResult DeleteOffer(Guid id)
+        public async Task<IActionResult> DeleteOffer(Guid id)
         {
-            var offer = _context.Offers.FirstOrDefault(o => o.Id == id);
+            var offer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == id);
 
             if (offer == null)
             {
@@ -141,15 +141,15 @@ namespace OtomotoSimpleBackend.Controllers
             var offerDto = _mapper.Map<OfferDto>(offer);
 
             _context.Offers.Remove(offer);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(offerDto);
         }
 
         [HttpDelete("DeleteOwner{id}")]
-        public IActionResult DeleteOwner(Guid id)
+        public async Task<IActionResult> DeleteOwner(Guid id)
         {
-            var owner = _context.Owners.FirstOrDefault(o => o.Id == id);
+            var owner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == id);
 
             if (owner == null)
             {
@@ -159,7 +159,7 @@ namespace OtomotoSimpleBackend.Controllers
             var ownerDto = _mapper.Map<OwnerDtoPublic>(owner);
 
             _context.Owners.Remove(owner);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(ownerDto);
         }
