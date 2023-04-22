@@ -138,10 +138,12 @@ namespace OtomotoSimpleBackend.Controllers
                 return NotFound("Offer doesn't exist");
             }
 
+            var offerDto = _mapper.Map<OfferDto>(offer);
+
             _context.Offers.Remove(offer);
             _context.SaveChanges();
 
-            return Ok(offer);
+            return Ok(offerDto);
         }
 
         [HttpDelete("DeleteOwner{id}")]
@@ -154,10 +156,12 @@ namespace OtomotoSimpleBackend.Controllers
                 return NotFound("Offer doesn't exist");
             }
 
+            var ownerDto = _mapper.Map<OwnerDtoPublic>(owner);
+
             _context.Owners.Remove(owner);
             _context.SaveChanges();
 
-            return Ok(owner);
+            return Ok(ownerDto);
         }
     }
 }
