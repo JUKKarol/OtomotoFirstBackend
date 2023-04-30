@@ -21,8 +21,7 @@ namespace OtomotoSimpleBackend
                 options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
 
-            builder.Services.AddDbContext<OtomotoContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("OtomotoConnectionString")));
+            builder.Services.AddDbContext<OtomotoContext>();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

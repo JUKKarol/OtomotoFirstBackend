@@ -1,13 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using OtomotoSimpleBackend.Entities;
 
 namespace OtomotoSimpleBackend.Data
 {
     public class OtomotoContext : DbContext
     {
-        public OtomotoContext(DbContextOptions<OtomotoContext> options) : base(options)
-        {
+        private readonly IConfiguration _configuration;
 
+        public OtomotoContext(DbContextOptions<OtomotoContext> options, IConfiguration configuration) : base(options)
+        {
+            _configuration = configuration;
         }
 
         public DbSet<Offer> Offers { get; set; }
@@ -61,14 +64,16 @@ namespace OtomotoSimpleBackend.Data
                 eb.Property(o => o.Email)
                .IsRequired()
                .HasMaxLength(30);
-
-                eb.Property(o => o.Password)
-               .IsRequired()
-               .HasMaxLength(40);
             });
 
             base.OnModelCreating(modelBuilder);
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder
+                .UseSqlServer(_configuration.GetConnectionString("OtomotoConnectionString"));
+        }
     }
 }
