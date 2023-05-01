@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OtomotoSimpleBackend.Data;
-using OtomotoSimpleBackend.Entities;
+﻿using OtomotoSimpleBackend.Entities;
+using OtomotoSimpleBackend.Services;
 
 namespace OtomotoSimpleBackend.Data.Seeders
 {
     public class Seeder
     {
         private readonly OtomotoContext _otomotoContext;
+        private readonly IOwnerService _ownerService;
 
         public Seeder(OtomotoContext otomotoContext)
         {
@@ -27,7 +27,6 @@ namespace OtomotoSimpleBackend.Data.Seeders
                         PhoneNumber = 123456789,
                         City = "New York",
                         Email = "johndoe12@gmail.com",
-                        Password = "IlikeBMW123"
                     };
 
                     Owner owner2 = new Owner()
@@ -38,7 +37,6 @@ namespace OtomotoSimpleBackend.Data.Seeders
                         PhoneNumber = 987654321,
                         City = "Los Angeles",
                         Email = "janesmith11@gmail.com",
-                        Password = "carmellover633"
                     };
 
                     Owner owner3 = new Owner()
@@ -49,7 +47,6 @@ namespace OtomotoSimpleBackend.Data.Seeders
                         PhoneNumber = 555555555,
                         City = "Chicago",
                         Email = "michaeljonson9@gmail.com",
-                        Password = "askd8qasS"
                     };
 
                     _otomotoContext.Owners.AddRange(owner1, owner2, owner3);

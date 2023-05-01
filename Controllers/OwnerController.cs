@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OtomotoSimpleBackend.Data;
 using OtomotoSimpleBackend.DTOs;
 using OtomotoSimpleBackend.Entities;
+using OtomotoSimpleBackend.Services;
 
 namespace OtomotoSimpleBackend.Controllers
 {
@@ -13,11 +14,13 @@ namespace OtomotoSimpleBackend.Controllers
     {
         private readonly OtomotoContext _context;
         private readonly IMapper _mapper;
+        private readonly IOwnerService _ownerService;
 
-        public OwnerController(OtomotoContext context, IMapper mapper)
+        public OwnerController(OtomotoContext context, IMapper mapper, IOwnerService ownerService)
         {
             _context = context;
             _mapper = mapper;
+            _ownerService = ownerService;
         }
 
         [HttpGet("GetOwners")]
@@ -43,9 +46,18 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(offers);
         }
 
-        [HttpPost("CreateOwner")]
-        public async Task<IActionResult> CreateOwner(OwnerDtoRegistration ownerDto)
+        [HttpPost("RegisterOwner")]
+        public async Task<IActionResult> RegisterOwner(OwnerDtoRegistration ownerDto)
         {
+            if (_context.Owners.Any(u => u.Email == ownerDto.Email))
+            {
+                return BadRequest("User already exists");
+            }
+
+            _ownerService.CreatePasswordHash(ownerDto.Password,
+                out byte[] passwordHash
+                , out byte[] passwordSalt);
+
             var owner = _mapper.Map<Owner>(ownerDto);
 
             await _context.Owners.AddAsync(owner);

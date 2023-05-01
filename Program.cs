@@ -1,7 +1,10 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using OtomotoSimpleBackend.Data;
 using OtomotoSimpleBackend.Data.Seeders;
+using OtomotoSimpleBackend.Services;
+using OtomotoSimpleBackend.Utilities.Mappings;
 using System.Text.Json.Serialization;
 
 namespace OtomotoSimpleBackend
@@ -24,11 +27,16 @@ namespace OtomotoSimpleBackend
             builder.Services.AddDbContext<OtomotoContext>();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddSingleton(provider => new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new OwnerMappingProfile(provider.CreateScope().ServiceProvider.GetService<IOwnerService>()));
+
+            }).CreateMapper());
+
+            builder.Services.AddScoped<IOwnerService, OwnerService>();
 
             var app = builder.Build();
-
             var scope = app.Services.CreateScope();
-
             var dbContext = scope.ServiceProvider.GetService<OtomotoContext>();
 
             var pendingMigrations = dbContext.Database.GetPendingMigrations();
