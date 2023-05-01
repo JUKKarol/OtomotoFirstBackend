@@ -43,8 +43,8 @@ namespace OtomotoSimpleBackend.Controllers
 
             var smtp = new MailKit.Net.Smtp.SmtpClient();
 
-            smtp.Connect("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
-            smtp.Authenticate("testtest34252@gmail.com", "crsekfwwqensrerh");
+            smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+            smtp.Authenticate("testtest34252@gmail.com", "doxxgpsdhvnnirgr");
             smtp.Send(email);
             smtp.Disconnect(true);
 
