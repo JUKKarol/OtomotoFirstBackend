@@ -11,9 +11,9 @@
         public byte[] PasswordHash { get; set; } = new byte[32];
         public byte[] PasswordSalt { get; set; } = new byte[32];
         public string VeryficationToken { get; set; }
-        public DateTime VerifiedAt { get; set; }
+        public DateTime? VerifiedAt { get; set; } = null;
         public string PasswordResetToken { get; set; }
-        public DateTime ResetTokenExpires { get; set; }
+        public DateTime? ResetTokenExpires { get; set; } = null;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         public List<Offer> Offers { get; set; }

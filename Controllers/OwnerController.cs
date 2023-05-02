@@ -16,6 +16,49 @@ namespace OtomotoSimpleBackend.Controllers
         private readonly IMapper _mapper;
         private readonly IOwnerService _ownerService;
 
+        [HttpPost("RegisterOwner")]
+        public async Task<IActionResult> RegisterOwner(OwnerDtoRegistration ownerDto)
+        {
+            if (_context.Owners.Any(u => u.Email == ownerDto.Email))
+            {
+                return BadRequest("User already exists");
+            }
+
+            _ownerService.CreatePasswordHash(ownerDto.Password,
+                out byte[] passwordHash
+                , out byte[] passwordSalt);
+
+            var owner = _mapper.Map<Owner>(ownerDto);
+
+            await _context.Owners.AddAsync(owner);
+            await _context.SaveChangesAsync();
+
+            return Ok("User successfully created");
+        }
+
+        [HttpPost("LoginOwner")]
+        public async Task<IActionResult> LoginOwner(OwnerDtoLogin ownerDto)
+        {
+            var owner = await _context.Owners.FirstOrDefaultAsync(o => o.Email == ownerDto.Email);
+
+            if (owner == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            if (!_ownerService.VerifyPasswordHash(ownerDto.Password, owner.PasswordHash, owner.PasswordSalt))
+            {
+                return BadRequest("Password incorect");
+            }
+
+            if (owner.VerifiedAt == null)
+            {
+                return BadRequest("Not verified");
+            }
+
+            return Ok("Logged in");
+        }
+
         public OwnerController(OtomotoContext context, IMapper mapper, IOwnerService ownerService)
         {
             _context = context;
@@ -44,26 +87,6 @@ namespace OtomotoSimpleBackend.Controllers
                 .ToListAsync();
 
             return Ok(offers);
-        }
-
-        [HttpPost("RegisterOwner")]
-        public async Task<IActionResult> RegisterOwner(OwnerDtoRegistration ownerDto)
-        {
-            if (_context.Owners.Any(u => u.Email == ownerDto.Email))
-            {
-                return BadRequest("User already exists");
-            }
-
-            _ownerService.CreatePasswordHash(ownerDto.Password,
-                out byte[] passwordHash
-                , out byte[] passwordSalt);
-
-            var owner = _mapper.Map<Owner>(ownerDto);
-
-            await _context.Owners.AddAsync(owner);
-            await _context.SaveChangesAsync();
-
-            return Ok(owner);
         }
 
         [HttpPut("PutOwner/{id}")]
