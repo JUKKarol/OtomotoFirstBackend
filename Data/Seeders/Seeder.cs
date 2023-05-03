@@ -1,4 +1,5 @@
-﻿using OtomotoSimpleBackend.Entities;
+﻿using OtomotoSimpleBackend.DTOs;
+using OtomotoSimpleBackend.Entities;
 using OtomotoSimpleBackend.Services;
 
 namespace OtomotoSimpleBackend.Data.Seeders
@@ -8,9 +9,10 @@ namespace OtomotoSimpleBackend.Data.Seeders
         private readonly OtomotoContext _otomotoContext;
         private readonly IOwnerService _ownerService;
 
-        public Seeder(OtomotoContext otomotoContext)
+        public Seeder(OtomotoContext otomotoContext, IOwnerService ownerService)
         {
             _otomotoContext = otomotoContext;
+            _ownerService = ownerService;
         }
 
         public void Seed()
@@ -19,6 +21,12 @@ namespace OtomotoSimpleBackend.Data.Seeders
             {
                 if (!_otomotoContext.Owners.Any() && !_otomotoContext.Offers.Any())
                 {
+                    string seedesOwnersPassword = "string";
+
+                    _ownerService.CreatePasswordHash(seedesOwnersPassword,
+                        out byte[] passwordHash
+                        , out byte[] passwordSalt);
+
                     Owner owner1 = new Owner()
                     {
                         Id = Guid.Parse("3F2504E0-4F89-11D3-9A0C-0305E82C3301"),
@@ -27,7 +35,10 @@ namespace OtomotoSimpleBackend.Data.Seeders
                         PhoneNumber = 123456789,
                         City = "New York",
                         Email = "johndoe12@gmail.com",
-                    };
+                        PasswordHash = passwordHash,
+                        PasswordSalt = passwordSalt,
+                        VeryficationToken = _ownerService.CreateRandomToken(),
+                };
 
                     Owner owner2 = new Owner()
                     {
@@ -37,6 +48,9 @@ namespace OtomotoSimpleBackend.Data.Seeders
                         PhoneNumber = 987654321,
                         City = "Los Angeles",
                         Email = "janesmith11@gmail.com",
+                        PasswordHash = passwordHash,
+                        PasswordSalt = passwordSalt,
+                        VeryficationToken = _ownerService.CreateRandomToken(),
                     };
 
                     Owner owner3 = new Owner()
@@ -47,6 +61,9 @@ namespace OtomotoSimpleBackend.Data.Seeders
                         PhoneNumber = 555555555,
                         City = "Chicago",
                         Email = "michaeljonson9@gmail.com",
+                        PasswordHash = passwordHash,
+                        PasswordSalt = passwordSalt,
+                        VeryficationToken = _ownerService.CreateRandomToken(),
                     };
 
                     _otomotoContext.Owners.AddRange(owner1, owner2, owner3);

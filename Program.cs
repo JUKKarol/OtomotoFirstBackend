@@ -38,6 +38,7 @@ namespace OtomotoSimpleBackend
             var app = builder.Build();
             var scope = app.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetService<OtomotoContext>();
+            var ownerService = scope.ServiceProvider.GetService<IOwnerService>();
 
             var pendingMigrations = dbContext.Database.GetPendingMigrations();
             if (pendingMigrations.Any())
@@ -45,7 +46,7 @@ namespace OtomotoSimpleBackend
                 dbContext.Database.Migrate();
             }
 
-            var seeder = new Seeder(dbContext);
+            var seeder = new Seeder(dbContext, ownerService);
             seeder.Seed();
 
             if (app.Environment.IsDevelopment())
