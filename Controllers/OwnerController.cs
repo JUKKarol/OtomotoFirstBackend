@@ -16,6 +16,13 @@ namespace OtomotoSimpleBackend.Controllers
         private readonly IMapper _mapper;
         private readonly IOwnerService _ownerService;
 
+        public OwnerController(OtomotoContext context, IMapper mapper, IOwnerService ownerService)
+        {
+            _context = context;
+            _mapper = mapper;
+            _ownerService = ownerService;
+        }
+
         [HttpPost("RegisterOwner")]
         public async Task<IActionResult> RegisterOwner(OwnerDtoRegistration ownerDto)
         {
@@ -59,11 +66,19 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok("Logged in");
         }
 
-        public OwnerController(OtomotoContext context, IMapper mapper, IOwnerService ownerService)
+        [HttpPost("VerifyOwner")]
+        public async Task<IActionResult> VerifyOwner(string token)
         {
-            _context = context;
-            _mapper = mapper;
-            _ownerService = ownerService;
+            var owner = await _context.Owners.FirstOrDefaultAsync(u => u.VeryficationToken == token);
+            if (owner == null)
+            {
+                return BadRequest("Invalid token");
+            }
+
+            owner.VerifiedAt = DateTime.Now;
+            await _context.SaveChangesAsync();
+
+            return Ok("User verified");
         }
 
         [HttpGet("GetOwners")]
