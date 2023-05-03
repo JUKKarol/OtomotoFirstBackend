@@ -30,7 +30,7 @@ namespace OtomotoSimpleBackend
             builder.Services.AddSingleton(provider => new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new OwnerMappingProfile(provider.CreateScope().ServiceProvider.GetService<IOwnerService>()));
-
+                cfg.AddProfile<OfferMappingProfile>();
             }).CreateMapper());
 
             builder.Services.AddScoped<IOwnerService, OwnerService>();

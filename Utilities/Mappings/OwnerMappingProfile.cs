@@ -13,7 +13,7 @@ namespace OtomotoSimpleBackend.Utilities.Mappings
         {
             _ownerService = ownerService;
 
-            CreateMap<Owner, OwnerDtoPublic>().ReverseMap();
+            CreateMap<Owner, OwnerDtoPublic>();
 
             CreateMap<OwnerDtoRegistration, Owner>()
               .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
