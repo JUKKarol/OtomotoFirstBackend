@@ -12,5 +12,7 @@ namespace OtomotoSimpleBackend.Services
                 , byte[] passwordSalt);
 
         string CreateRandomToken();
+
+        string CreateToken(OwnerDtoLogin owner);
     }
 }

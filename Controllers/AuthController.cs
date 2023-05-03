@@ -63,7 +63,9 @@ namespace OtomotoSimpleBackend.Controllers
                 return BadRequest("Not verified");
             }
 
-            return Ok("Logged in");
+            string token = _ownerService.CreateToken(ownerDto);
+
+            return Ok(token);
         }
 
         [HttpPost("VerifyOwner")]

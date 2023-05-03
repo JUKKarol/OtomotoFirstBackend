@@ -1,9 +1,21 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.IdentityModel.Tokens;
+using OtomotoSimpleBackend.DTOs;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace OtomotoSimpleBackend.Services
 {
     public class OwnerService : IOwnerService
     {
+        private readonly IConfiguration _configuration;
+
+        public OwnerService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             using (var hmac = new HMACSHA512())
@@ -28,6 +40,29 @@ namespace OtomotoSimpleBackend.Services
         public string CreateRandomToken()
         {
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        }
+
+        public string CreateToken(OwnerDtoLogin owner)
+        { 
+            List<Claim> claims = new List<Claim> 
+            { 
+                new Claim(ClaimTypes.Email, owner.Email)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                _configuration.GetSection("AppSettings:Token").Value!));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var token = new JwtSecurityToken(
+                    claims: claims,
+                    expires: DateTime.Now.AddDays(1),
+                    signingCredentials: creds
+                );
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
         }
     }
 }
