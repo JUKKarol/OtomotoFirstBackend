@@ -81,6 +81,43 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok("User verified");
         }
 
+        [HttpPost("ForgotOwnerPassword")]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var owner = await _context.Owners.FirstOrDefaultAsync(u => u.Email == email);
+            if (owner == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            owner.PasswordResetToken = _ownerService.CreateRandomToken();
+            owner.ResetTokenExpires = DateTime.Now.AddDays(1);
+            await _context.SaveChangesAsync();
+
+            return Ok("You may now reset your password");
+        }
+
+        [HttpPost("ResetOwnerPassword")]
+        public async Task<IActionResult> ResettPassword(OwnerDtoResetPassword ownerDto)
+        {
+            var owner = await _context.Owners.FirstOrDefaultAsync(u => u.PasswordResetToken == ownerDto.Token);
+            if (owner == null || owner.ResetTokenExpires < DateTime.Now)
+            {
+                return BadRequest("Invalid Token.");
+            }
+
+            _ownerService.CreatePasswordHash(ownerDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            owner.PasswordHash = passwordHash;
+            owner.PasswordSalt = passwordSalt;
+            owner.PasswordResetToken = null;
+            owner.ResetTokenExpires = null;
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Password successfully reset.");
+        }
+
         [HttpGet("GetOwners")]
         public async Task<IActionResult> GetOwners()
         {
