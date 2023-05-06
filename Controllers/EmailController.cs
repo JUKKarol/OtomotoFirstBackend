@@ -35,16 +35,19 @@ namespace OtomotoSimpleBackend.Controllers
 
             string body = $"New car for sale! {offer.Brand} {offer.Model}, {offer.Body} price: {offer.PriceInEur}";
 
+            string emailaddress = "osborne.quigley@ethereal.email";
+            string password = "kctS7pfDRe2PVbHmZ9";
+
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse("testtest34252@gmail.com"));
-            email.To.Add(MailboxAddress.Parse("testtest34252@gmail.com"));
+            email.From.Add(MailboxAddress.Parse(emailaddress));
+            email.To.Add(MailboxAddress.Parse(emailaddress));
             email.Subject = "Test";
             email.Body = new TextPart(TextFormat.Html) { Text = body };
 
             var smtp = new MailKit.Net.Smtp.SmtpClient();
 
-            smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate("testtest34252@gmail.com", "doxxgpsdhvnnirgr");
+            smtp.Connect("smtp.ethereal.email", 587, SecureSocketOptions.StartTls);
+            smtp.Authenticate(emailaddress, password);
             smtp.Send(email);
             smtp.Disconnect(true);
 

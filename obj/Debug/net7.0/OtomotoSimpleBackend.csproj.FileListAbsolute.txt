@@ -79,3 +79,7 @@ C:\Users\Admin\source\repos\OtomotoSimpleBackend\bin\Debug\net7.0\AutoMapper.Ext
 C:\Users\Admin\source\repos\OtomotoSimpleBackend\bin\Debug\net7.0\BouncyCastle.Cryptography.dll
 C:\Users\Admin\source\repos\OtomotoSimpleBackend\bin\Debug\net7.0\MailKit.dll
 C:\Users\Admin\source\repos\OtomotoSimpleBackend\bin\Debug\net7.0\MimeKit.dll
+C:\Users\Admin\source\repos\OtomotoSimpleBackend\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Admin\source\repos\OtomotoSimpleBackend\bin\Debug\net7.0\Scrutor.dll
+C:\Users\Admin\source\repos\OtomotoSimpleBackend\bin\Debug\net7.0\Swashbuckle.AspNetCore.Filters.dll
+C:\Users\Admin\source\repos\OtomotoSimpleBackend\bin\Debug\net7.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll

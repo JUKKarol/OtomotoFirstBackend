@@ -43,10 +43,11 @@ namespace OtomotoSimpleBackend.Services
         }
 
         public string CreateToken(OwnerDtoLogin owner)
-        { 
+        {
             List<Claim> claims = new List<Claim> 
-            { 
-                new Claim(ClaimTypes.Email, owner.Email)
+            {
+                new Claim(ClaimTypes.Email, owner.Email),
+                new Claim(ClaimTypes.Role, "User"),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(

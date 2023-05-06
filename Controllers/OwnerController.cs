@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OtomotoSimpleBackend.Data;
 using OtomotoSimpleBackend.DTOs;
 using OtomotoSimpleBackend.Entities;
 using OtomotoSimpleBackend.Services;
+using System.Data;
 
 namespace OtomotoSimpleBackend.Controllers
 {
@@ -23,7 +25,7 @@ namespace OtomotoSimpleBackend.Controllers
             _ownerService = ownerService;
         }
 
-        [HttpGet("GetOwners")]
+        [HttpGet(Name = "GetOwner"), Authorize(Roles = "User")]
         public async Task<IActionResult> GetOwners()
         {
             var owners = await _context.Owners
