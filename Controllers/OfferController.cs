@@ -66,10 +66,21 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(offerDto);
         }
 
-        [HttpPut("PutOffer/{id}"), Authorize(Roles = "User")]
-        public async Task<IActionResult> PutOffer(Guid id, [FromBody] OfferDto offerDto)
+        [HttpPut("PutOffer/{offerId}"), Authorize(Roles = "User")]
+        public async Task<IActionResult> PutOffer(Guid offerId, [FromBody] OfferDto offerDto)
         {
-            var existingOffer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == id);
+            var ownerEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email);
+            var ownerRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
+
+            var owner = await _context.Owners.FirstOrDefaultAsync(o => o.Email == ownerEmail);
+            var existingOffer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == offerId);
+            offerDto.OwnerId = owner.Id;
+
+
+            if (ownerRole != OwnerPermissions.Administrator.ToString() && owner.Id != existingOffer.OwnerId)
+            {
+                return BadRequest("Permission denied");
+            }
 
             if (existingOffer == null)
             {
