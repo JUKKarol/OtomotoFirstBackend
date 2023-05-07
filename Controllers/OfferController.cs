@@ -32,7 +32,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(offers);
         }
 
-        [HttpGet("GetOfferById/{offerId}")]
+        [HttpGet("GetOfferById/{offerId}"), Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetOfferById(Guid offerId)
         {
             var offer = await _context.Offers

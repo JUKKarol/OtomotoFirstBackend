@@ -38,7 +38,7 @@ namespace OtomotoSimpleBackend.Data.Seeders
                         PasswordHash = passwordHash,
                         PasswordSalt = passwordSalt,
                         VeryficationToken = _ownerService.CreateRandomToken(),
-                };
+                    };
 
                     Owner owner2 = new Owner()
                     {
@@ -66,7 +66,21 @@ namespace OtomotoSimpleBackend.Data.Seeders
                         VeryficationToken = _ownerService.CreateRandomToken(),
                     };
 
-                    _otomotoContext.Owners.AddRange(owner1, owner2, owner3);
+                    Owner admin = new Owner()
+                    {
+                        Id = Guid.Parse("2e5241f6-2e2b-46a9-84d7-418a51b8c3d3"),
+                        FirstName = "William",
+                        LastName = "Rodriguez",
+                        PhoneNumber = 324645524,
+                        City = "San Francisco",
+                        Email = "william.rodriguez88@gmail.com",
+                        PasswordHash = passwordHash,
+                        PasswordSalt = passwordSalt,
+                        VeryficationToken = _ownerService.CreateRandomToken(),
+                        Permissions = Enums.OwnerPermissions.Administrator,
+                    };
+
+                    _otomotoContext.Owners.AddRange(owner1, owner2, owner3, admin);
                     _otomotoContext.SaveChanges();
 
                     Offer offer1 = new Offer()

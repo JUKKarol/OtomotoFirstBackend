@@ -26,7 +26,7 @@ namespace OtomotoSimpleBackend.Controllers
             _ownerService = ownerService;
         }
 
-        [HttpGet(Name = "GetOwner"), Authorize(Roles = "User")]
+        [HttpGet("GetOwners"), Authorize(Roles = "User")]
         public async Task<IActionResult> GetOwners()
         {
             var owners = await _context.Owners
@@ -37,7 +37,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(owners);
         }
 
-        [HttpGet("GetOwnerOffers/{ownerId}")]
+        [HttpGet("GetOwnerOffers/{ownerId}"), Authorize(Roles = "User")]
         public async Task<IActionResult> GetOwnerOffers(Guid ownerId)
         {
             var offers = await _context.Offers

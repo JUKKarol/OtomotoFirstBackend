@@ -58,6 +58,11 @@ namespace OtomotoSimpleBackend.Services
                 new Claim(ClaimTypes.Role, ownerPermission),
             };
 
+            if (ownerPermission == OwnerPermissions.Administrator.ToString())
+            {
+                claims.Add(new Claim(ClaimTypes.Role, OwnerPermissions.User.ToString()));
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 _configuration.GetSection("AppSettings:Token").Value!));
 
