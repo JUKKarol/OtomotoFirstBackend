@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OtomotoSimpleBackend.Data;
 using OtomotoSimpleBackend.DTOs;
 using OtomotoSimpleBackend.Entities;
+using OtomotoSimpleBackend.Enums;
 using OtomotoSimpleBackend.Services;
 using System.Data;
 

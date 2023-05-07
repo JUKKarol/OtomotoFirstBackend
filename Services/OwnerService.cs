@@ -1,5 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using OtomotoSimpleBackend.Data;
 using OtomotoSimpleBackend.DTOs;
+using OtomotoSimpleBackend.Enums;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -10,10 +12,12 @@ namespace OtomotoSimpleBackend.Services
     public class OwnerService : IOwnerService
     {
         private readonly IConfiguration _configuration;
+        private readonly OtomotoContext _otomotoContext;
 
-        public OwnerService(IConfiguration configuration)
+        public OwnerService(IConfiguration configuration, OtomotoContext otomotoContext)
         {
             _configuration = configuration;
+            _otomotoContext = otomotoContext;
         }
 
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
@@ -42,12 +46,16 @@ namespace OtomotoSimpleBackend.Services
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
         }
 
-        public string CreateToken(OwnerDtoLogin owner)
+        public string CreateToken(OwnerDtoLogin ownerDto)
         {
+            var owner = _otomotoContext.Owners.FirstOrDefault(o => o.Email == ownerDto.Email);
+            var ownerPermission = owner.Permissions.ToString();
+
+
             List<Claim> claims = new List<Claim> 
             {
-                new Claim(ClaimTypes.Email, owner.Email),
-                new Claim(ClaimTypes.Role, "User"),
+                new Claim(ClaimTypes.Email, ownerDto.Email),
+                new Claim(ClaimTypes.Role, ownerPermission),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(

@@ -1,4 +1,6 @@
-﻿namespace OtomotoSimpleBackend.DTOs
+﻿using OtomotoSimpleBackend.Enums;
+
+namespace OtomotoSimpleBackend.DTOs
 {
     public class OwnerDtoPublic
     {
@@ -7,5 +9,6 @@
         public int PhoneNumber { get; set; }
         public string City { get; set; }
         public DateTime CreatedDate { get; set; }
+        public OwnerPermissions Permissions { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using OtomotoSimpleBackend.DTOs;
 using OtomotoSimpleBackend.Entities;
 using OtomotoSimpleBackend.Services;
+using OtomotoSimpleBackend.Enums;
 
 namespace OtomotoSimpleBackend.Utilities.Mappings
 {

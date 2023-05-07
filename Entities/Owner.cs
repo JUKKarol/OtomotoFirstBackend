@@ -1,4 +1,6 @@
-﻿namespace OtomotoSimpleBackend.Entities
+﻿using OtomotoSimpleBackend.Enums;
+
+namespace OtomotoSimpleBackend.Entities
 {
     public class Owner
     {
@@ -15,6 +17,7 @@
         public string PasswordResetToken { get; set; }
         public DateTime? ResetTokenExpires { get; set; } = null;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public OwnerPermissions Permissions { get; set; } = OwnerPermissions.User;
 
         public List<Offer> Offers { get; set; }
     }
