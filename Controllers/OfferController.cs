@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using OtomotoSimpleBackend.Data;
 using OtomotoSimpleBackend.DTOs;
 using OtomotoSimpleBackend.Entities;
+using OtomotoSimpleBackend.Enums;
+using System.Security.Claims;
 
 namespace OtomotoSimpleBackend.Controllers
 {
@@ -44,16 +46,19 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(offer);
         }
 
-        [HttpPost("CreateOffer")]
+        [HttpPost("CreateOffer"), Authorize(Roles = "User")]
         public async Task<IActionResult> CreateOffer(OfferDto offerDto)
         {
-            var owner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == offerDto.OwnerId);
+            var ownerEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email);
+
+            var owner = await _context.Owners.FirstOrDefaultAsync(o => o.Email == ownerEmail);
             if (owner == null)
             {
                 return NotFound("Owner doesn't exist");
             }
 
             var offer = _mapper.Map<Offer>(offerDto);
+            offer.OwnerId = owner.Id;
 
             await _context.Offers.AddAsync(offer);
             await _context.SaveChangesAsync();
@@ -61,7 +66,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(offerDto);
         }
 
-        [HttpPut("PutOffer/{id}")]
+        [HttpPut("PutOffer/{id}"), Authorize(Roles = "User")]
         public async Task<IActionResult> PutOffer(Guid id, [FromBody] OfferDto offerDto)
         {
             var existingOffer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == id);
@@ -78,7 +83,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(existingOffer);
         }
 
-        [HttpDelete("DeleteOffer{id}")]
+        [HttpDelete("DeleteOffer{id}"), Authorize(Roles = "User")]
         public async Task<IActionResult> DeleteOffer(Guid id)
         {
             var offer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == id);

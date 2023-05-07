@@ -26,7 +26,7 @@ namespace OtomotoSimpleBackend.Controllers
             _ownerService = ownerService;
         }
 
-        [HttpGet("GetOwners"), Authorize(Roles = "User")]
+        [HttpGet("GetOwners"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetOwners()
         {
             var owners = await _context.Owners
@@ -49,7 +49,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(offers);
         }
 
-        [HttpPut("PutOwner/{id}")]
+        [HttpPut("PutOwner/{id}"), Authorize(Roles = "User")]
         public async Task<IActionResult> PutOwner(Guid id, [FromBody] OwnerDtoRegistration ownerDto)
         {
             var existingOwner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == id);
@@ -66,7 +66,24 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(existingOwner);
         }
 
-        [HttpDelete("DeleteOwner{id}")]
+        [HttpPut("ChangeRole/{id}"), Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> SetOwnerAsAdmin(Guid id, OwnerPermissions permissions)
+        {
+            var existingOwner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == id);
+
+            if (existingOwner == null)
+            {
+                return NotFound("Owner doesn't exist");
+            }
+
+            existingOwner.Permissions = permissions;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(existingOwner);
+        }
+
+        [HttpDelete("DeleteOwner{id}"), Authorize(Roles = "User")]
         public async Task<IActionResult> DeleteOwner(Guid id)
         {
             var owner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == id);
