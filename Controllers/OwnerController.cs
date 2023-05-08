@@ -8,6 +8,7 @@ using OtomotoSimpleBackend.Entities;
 using OtomotoSimpleBackend.Enums;
 using OtomotoSimpleBackend.Services;
 using System.Data;
+using System.Security.Claims;
 
 namespace OtomotoSimpleBackend.Controllers
 {
@@ -52,11 +53,20 @@ namespace OtomotoSimpleBackend.Controllers
         [HttpPut("PutOwner/{id}"), Authorize(Roles = "User")]
         public async Task<IActionResult> PutOwner(Guid id, [FromBody] OwnerDtoRegistration ownerDto)
         {
+            var ownerEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email);
+            var ownerRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
+
+            var authorizedOwner = await _context.Owners.FirstOrDefaultAsync(o => o.Email == ownerEmail);
             var existingOwner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == id);
 
             if (existingOwner == null)
             {
                 return NotFound("Owner doesn't exist");
+            }
+
+            if (ownerRole != OwnerPermissions.Administrator.ToString() && authorizedOwner.Id != existingOwner.Id)
+            {
+                return BadRequest("Permission denied");
             }
 
             _mapper.Map(ownerDto, existingOwner);
@@ -86,16 +96,25 @@ namespace OtomotoSimpleBackend.Controllers
         [HttpDelete("DeleteOwner{id}"), Authorize(Roles = "User")]
         public async Task<IActionResult> DeleteOwner(Guid id)
         {
-            var owner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == id);
+            var ownerEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email);
+            var ownerRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
 
-            if (owner == null)
+            var authorizedOwner = await _context.Owners.Include(o => o.Offers).FirstOrDefaultAsync(o => o.Email == ownerEmail);
+            var existingOwner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == id);
+
+            if (existingOwner == null)
             {
                 return NotFound("Owner doesn't exist");
             }
 
-            var ownerDto = _mapper.Map<OwnerDtoPublic>(owner);
+            if (ownerRole != OwnerPermissions.Administrator.ToString() && authorizedOwner.Id != existingOwner.Id)
+            {
+                return BadRequest("Permission denied");
+            }
 
-            _context.Owners.Remove(owner);
+            var ownerDto = _mapper.Map<OwnerDtoPublic>(existingOwner);
+
+            _context.Owners.Remove(existingOwner);
             await _context.SaveChangesAsync();
 
             return Ok(ownerDto);
