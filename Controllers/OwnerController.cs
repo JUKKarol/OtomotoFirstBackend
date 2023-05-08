@@ -90,7 +90,7 @@ namespace OtomotoSimpleBackend.Controllers
 
             if (owner == null)
             {
-                return NotFound("Offer doesn't exist");
+                return NotFound("Owner doesn't exist");
             }
 
             var ownerDto = _mapper.Map<OwnerDtoPublic>(owner);

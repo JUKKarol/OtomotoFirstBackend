@@ -34,7 +34,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(offers);
         }
 
-        [HttpGet("GetOfferById/{offerId}"), Authorize(Roles = "Administrator")]
+        [HttpGet("GetOfferById/{offerId}")]
         public async Task<IActionResult> GetOfferById(Guid offerId)
         {
             var offer = await _context.Offers
@@ -72,16 +72,16 @@ namespace OtomotoSimpleBackend.Controllers
             var ownerEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email);
             var ownerRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
 
-            var owner = await _context.Owners.FirstOrDefaultAsync(o => o.Email == ownerEmail);
+            var authorizedOwner = await _context.Owners.FirstOrDefaultAsync(o => o.Email == ownerEmail);
             var existingOffer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == offerId);
-            offerDto.OwnerId = owner.Id;
+            offerDto.OwnerId = authorizedOwner.Id;
 
             if (existingOffer == null)
             {
                 return NotFound("Offer doesn't exist");
             }
 
-            if (ownerRole != OwnerPermissions.Administrator.ToString() && owner.Id != existingOffer.OwnerId)
+            if (ownerRole != OwnerPermissions.Administrator.ToString() && authorizedOwner.Id != existingOffer.OwnerId)
             {
                 return BadRequest("Permission denied");
             }
@@ -93,19 +93,28 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(existingOffer);
         }
 
-        [HttpDelete("DeleteOffer{id}"), Authorize(Roles = "User")]
-        public async Task<IActionResult> DeleteOffer(Guid id)
+        [HttpDelete("DeleteOffer{offerId}"), Authorize(Roles = "User")]
+        public async Task<IActionResult> DeleteOffer(Guid offerId)
         {
-            var offer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == id);
+            var ownerEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email);
+            var ownerRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
 
-            if (offer == null)
+            var authorizedOwner = await _context.Owners.FirstOrDefaultAsync(o => o.Email == ownerEmail);
+            var existingOffer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == offerId);
+
+            if (existingOffer == null)
             {
                 return NotFound("Offer doesn't exist");
             }
 
-            var offerDto = _mapper.Map<OfferDto>(offer);
+            if (ownerRole != OwnerPermissions.Administrator.ToString() && authorizedOwner.Id != existingOffer.OwnerId)
+            {
+                return BadRequest("Permission denied");
+            }
 
-            _context.Offers.Remove(offer);
+            var offerDto = _mapper.Map<OfferDto>(existingOffer);
+
+            _context.Offers.Remove(existingOffer);
             await _context.SaveChangesAsync();
 
             return Ok(offerDto);
