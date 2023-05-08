@@ -1,4 +1,5 @@
 ﻿using OtomotoSimpleBackend.Enums;
+using System.Text.Json.Serialization;
 
 namespace OtomotoSimpleBackend.Entities
 {
@@ -19,6 +20,7 @@ namespace OtomotoSimpleBackend.Entities
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public OwnerPermissions Permissions { get; set; } = OwnerPermissions.User;
 
+        [JsonIgnore]
         public List<Offer> Offers { get; set; }
     }
 }

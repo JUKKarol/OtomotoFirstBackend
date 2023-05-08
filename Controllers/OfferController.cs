@@ -76,15 +76,14 @@ namespace OtomotoSimpleBackend.Controllers
             var existingOffer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == offerId);
             offerDto.OwnerId = owner.Id;
 
+            if (existingOffer == null)
+            {
+                return NotFound("Offer doesn't exist");
+            }
 
             if (ownerRole != OwnerPermissions.Administrator.ToString() && owner.Id != existingOffer.OwnerId)
             {
                 return BadRequest("Permission denied");
-            }
-
-            if (existingOffer == null)
-            {
-                return NotFound("Offer doesn't exist");
             }
 
             _mapper.Map(offerDto, existingOffer);

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace OtomotoSimpleBackend.Entities
 {
@@ -17,8 +18,9 @@ namespace OtomotoSimpleBackend.Entities
         public int ProductionYear { get; set; }
         public int Milleage { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
-
         public Guid OwnerId { get; set; }
+
+        [JsonIgnore]
         public Owner Owner { get; set; }
     }
 }
