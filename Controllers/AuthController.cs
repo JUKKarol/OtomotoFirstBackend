@@ -106,7 +106,7 @@ namespace OtomotoSimpleBackend.Controllers
 
             _emialService.SendVeryficationToken(userEmail, owner.PasswordResetToken);
 
-            return Ok("You may now reset your password");
+            return Ok("Reset code was sent to your email");
         }
 
         [HttpPost("ResetOwnerPassword")]

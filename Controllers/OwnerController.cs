@@ -73,7 +73,7 @@ namespace OtomotoSimpleBackend.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(existingOwner);
+            return Ok(ownerDto);
         }
 
         [HttpPut("ChangeRole/{id}"), Authorize(Roles = "Administrator")]
