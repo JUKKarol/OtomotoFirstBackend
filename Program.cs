@@ -61,6 +61,7 @@ namespace OtomotoSimpleBackend
             }).CreateMapper());
 
             builder.Services.AddScoped<IOwnerService, OwnerService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             var app = builder.Build();
             var scope = app.Services.CreateScope();

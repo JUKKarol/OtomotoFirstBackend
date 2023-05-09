@@ -15,12 +15,14 @@ namespace OtomotoSimpleBackend.Controllers
         private readonly OtomotoContext _context;
         private readonly IMapper _mapper;
         private readonly IOwnerService _ownerService;
+        private readonly IEmailService _emialService;
 
-        public AuthController(OtomotoContext context, IMapper mapper, IOwnerService ownerService)
+        public AuthController(OtomotoContext context, IMapper mapper, IOwnerService ownerService, IEmailService emialService)
         {
             _context = context;
             _mapper = mapper;
             _ownerService = ownerService;
+            _emialService = emialService;
         }
 
         [HttpPost("RegisterOwner")]
@@ -40,7 +42,13 @@ namespace OtomotoSimpleBackend.Controllers
             await _context.Owners.AddAsync(owner);
             await _context.SaveChangesAsync();
 
-            return Ok("User successfully created");
+            var createdUser = _context.Owners.FirstOrDefault(u => u.Email == ownerDto.Email);
+            string token = createdUser.VeryficationToken;
+            string userEmail = createdUser.Email;
+
+            _emialService.SendVeryficationToken(userEmail, token);
+
+            return Ok("User successfully created, confirmation code was sent");
         }
 
         [HttpPost("LoginOwner")]
@@ -84,9 +92,9 @@ namespace OtomotoSimpleBackend.Controllers
         }
 
         [HttpPost("ForgotOwnerPassword")]
-        public async Task<IActionResult> ForgotPassword(string email)
+        public async Task<IActionResult> ForgotPassword(string userEmail)
         {
-            var owner = await _context.Owners.FirstOrDefaultAsync(u => u.Email == email);
+            var owner = await _context.Owners.FirstOrDefaultAsync(u => u.Email == userEmail);
             if (owner == null)
             {
                 return BadRequest("User not found");
@@ -95,6 +103,8 @@ namespace OtomotoSimpleBackend.Controllers
             owner.PasswordResetToken = _ownerService.CreateRandomToken();
             owner.ResetTokenExpires = DateTime.Now.AddDays(1);
             await _context.SaveChangesAsync();
+
+            _emialService.SendVeryficationToken(userEmail, owner.PasswordResetToken);
 
             return Ok("You may now reset your password");
         }
