@@ -1,10 +1,9 @@
-﻿using MailKit.Security;
-using MimeKit.Text;
-using MimeKit;
-using OtomotoSimpleBackend.Data;
+﻿using OtomotoSimpleBackend.Data;
 using OtomotoSimpleBackend.Entities;
 using System.Net.Mail;
 using System.Net;
+using FluentEmail.Core;
+using FluentEmail.Smtp;
 
 namespace OtomotoSimpleBackend.Services
 {
@@ -23,39 +22,25 @@ namespace OtomotoSimpleBackend.Services
             string emailAddress = _configuration.GetSection("EmailPass:EmailAddress").Value!;
             string password = _configuration.GetSection("EmailPass:EmailPassword").Value!;
 
-            //var email = new MimeMessage();
-            //email.From.Add(MailboxAddress.Parse(emailAddress));
-            //email.To.Add(MailboxAddress.Parse(recipientEmailAddress));
-            //email.Subject = subject;
-            //email.Body = new TextPart(TextFormat.Html) { Text = body };
-
-            //var smtp = new MailKit.Net.Smtp.SmtpClient();
-
-            //smtp.Connect("smtp.ethereal.email", 587, SecureSocketOptions.StartTls);
-            //smtp.Authenticate(emailAddress, password);
-            //smtp.Send(email);
-            //smtp.Disconnect(true);
-
             var fromAddress = new MailAddress(emailAddress, "Info");
             var toAddress = new MailAddress(recipientEmailAddress, recipientEmailAddress);
 
-            var smtp = new System.Net.Mail.SmtpClient
+            var sender = new SmtpSender(() => new SmtpClient("smtp.ethereal.email")
             {
-                Host = "smtp.ethereal.email",
-                Port = 587,
                 EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, password)
-            };
-            using (var message = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = body
-            })
-            {
-                smtp.Send(message);
-            }
+                Port = 587,
+                Credentials = new NetworkCredential(emailAddress, password)
+            });
+
+            Email.DefaultSender = sender;
+
+            var email = Email
+                .From(emailAddress)
+                .To(recipientEmailAddress)
+                .Subject(subject)
+                .Body(body, isHtml: true);
+
+            email.Send();
         }
 
         public void SendVeryficationToken(string recipientEmailAddress, string token)
