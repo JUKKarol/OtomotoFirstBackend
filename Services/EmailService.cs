@@ -46,7 +46,7 @@ namespace OtomotoSimpleBackend.Services
         public void SendVeryficationToken(string recipientEmailAddress, string token)
         {
             string subject = "Your veryfication code!";
-            string body = $"There is your verification token: {token}\r\n Thanks for registration!";
+            string body = $"There is your verification token: {token} Thanks for registration!";
 
             SendMail(subject, body, recipientEmailAddress);
         }

@@ -25,7 +25,7 @@ namespace OtomotoSimpleBackend.Controllers
             _emialService = emialService;
         }
 
-        [HttpPost("RegisterOwner")]
+        [HttpPost("register")]
         public async Task<IActionResult> RegisterOwner(OwnerDtoRegistration ownerDto)
         {
             if (_context.Owners.Any(u => u.Email == ownerDto.Email))
@@ -51,7 +51,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok("User successfully created, confirmation code was sent");
         }
 
-        [HttpPost("LoginOwner")]
+        [HttpPost("login")]
         public async Task<IActionResult> LoginOwner(OwnerDtoLogin ownerDto)
         {
             var owner = await _context.Owners.FirstOrDefaultAsync(o => o.Email == ownerDto.Email);
@@ -76,7 +76,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(token);
         }
 
-        [HttpPost("VerifyOwner")]
+        [HttpPost("verify")]
         public async Task<IActionResult> VerifyOwner(string token)
         {
             var owner = await _context.Owners.FirstOrDefaultAsync(u => u.VeryficationToken == token);
@@ -91,7 +91,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok("User verified");
         }
 
-        [HttpPost("ForgotOwnerPassword")]
+        [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(string userEmail)
         {
             var owner = await _context.Owners.FirstOrDefaultAsync(u => u.Email == userEmail);
@@ -109,7 +109,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok("Reset code was sent to your email");
         }
 
-        [HttpPost("ResetOwnerPassword")]
+        [HttpPost("reset-password")]
         public async Task<IActionResult> ResettPassword(OwnerDtoResetPassword ownerDto)
         {
             var owner = await _context.Owners.FirstOrDefaultAsync(u => u.PasswordResetToken == ownerDto.Token);

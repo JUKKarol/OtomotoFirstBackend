@@ -27,7 +27,7 @@ namespace OtomotoSimpleBackend.Controllers
             _ownerService = ownerService;
         }
 
-        [HttpGet("GetOwners"), Authorize(Roles = "Admin")]
+        [HttpGet("owners"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetOwners()
         {
             var owners = await _context.Owners
@@ -38,7 +38,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(owners);
         }
 
-        [HttpGet("GetOwnerOffers/{ownerId}"), Authorize(Roles = "User")]
+        [HttpGet("owners/{ownerId}"), Authorize(Roles = "User")]
         public async Task<IActionResult> GetOwnerOffers(Guid ownerId)
         {
             var offers = await _context.Offers
@@ -47,10 +47,15 @@ namespace OtomotoSimpleBackend.Controllers
                 .Select(o => _mapper.Map<OfferDto>(o))
                 .ToListAsync();
 
+            if (offers.Count == 0)
+            {
+                return NotFound("Owner didn't have any offers");
+            }
+
             return Ok(offers);
         }
 
-        [HttpPut("PutOwner/{id}"), Authorize(Roles = "User")]
+        [HttpPut("owners/{id}"), Authorize(Roles = "User")]
         public async Task<IActionResult> PutOwner(Guid id, [FromBody] OwnerDtoRegistration ownerDto)
         {
             var ownerEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email);
@@ -76,8 +81,8 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(ownerDto);
         }
 
-        [HttpPut("ChangeRole/{id}"), Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> SetOwnerAsAdmin(Guid id, OwnerPermissions permissions)
+        [HttpPut("owners-role/{id}"), Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> ChangeOwnersRole(Guid id, OwnerPermissions permissions)
         {
             var existingOwner = await _context.Owners.FirstOrDefaultAsync(o => o.Id == id);
 
@@ -93,7 +98,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(existingOwner);
         }
 
-        [HttpDelete("DeleteOwner{id}"), Authorize(Roles = "User")]
+        [HttpDelete("owners/{id}"), Authorize(Roles = "User")]
         public async Task<IActionResult> DeleteOwner(Guid id)
         {
             var ownerEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email);

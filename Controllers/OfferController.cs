@@ -23,7 +23,7 @@ namespace OtomotoSimpleBackend.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("GetOffers")]
+        [HttpGet("offers")]
         public async Task<IActionResult> GetOffers()
         {
             var offers = await _context.Offers
@@ -34,19 +34,24 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(offers);
         }
 
-        [HttpGet("GetOfferById/{offerId}")]
+        [HttpGet("offers/{offerId}")]
         public async Task<IActionResult> GetOfferById(Guid offerId)
         {
             var offer = await _context.Offers
                 .AsNoTracking()
                 .Where(o => o.Id == offerId)
                 .Select(o => _mapper.Map<OfferDto>(o))
-                .ToListAsync();
+                .FirstOrDefaultAsync();
+
+            if (offer == null)
+            {
+                return NotFound("Offer not found");
+            }
 
             return Ok(offer);
         }
 
-        [HttpPost("CreateOffer"), Authorize(Roles = "User")]
+        [HttpPost("offers"), Authorize(Roles = "User")]
         public async Task<IActionResult> CreateOffer(OfferDto offerDto)
         {
             var ownerEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email);
@@ -66,7 +71,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(offerDto);
         }
 
-        [HttpPut("PutOffer/{offerId}"), Authorize(Roles = "User")]
+        [HttpPut("offers/{offerId}"), Authorize(Roles = "User")]
         public async Task<IActionResult> PutOffer(Guid offerId, [FromBody] OfferDto offerDto)
         {
             var ownerEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email);
@@ -93,7 +98,7 @@ namespace OtomotoSimpleBackend.Controllers
             return Ok(existingOffer);
         }
 
-        [HttpDelete("DeleteOffer{offerId}"), Authorize(Roles = "User")]
+        [HttpDelete("offers/{offerId}"), Authorize(Roles = "User")]
         public async Task<IActionResult> DeleteOffer(Guid offerId)
         {
             var ownerEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email);
